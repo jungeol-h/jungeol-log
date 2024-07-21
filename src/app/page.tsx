@@ -1,29 +1,35 @@
-// src/app/page.tsx
 import Link from "next/link";
+import { getAllPosts } from "@/lib/sanity.client";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
-export default function Home() {
-  // This will be replaced with actual data from Sanity later
-  const posts = [
-    { id: 1, title: "첫 번째 블로그 포스트", slug: "first-post" },
-    { id: 2, title: "두 번째 블로그 포스트", slug: "second-post" },
-    { id: 3, title: "세 번째 블로그 포스트", slug: "third-post" },
-  ];
+export default async function Home() {
+  const posts = await getAllPosts();
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">최근 포스트</h1>
-      <ul className="space-y-4">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">황준걸의 블로그</h1>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <li key={post.id} className="border-b pb-4">
-            <Link
-              href={`/posts/${post.slug}`}
-              className="text-xl font-semibold hover:text-blue-600"
-            >
-              {post.title}
-            </Link>
-          </li>
+          <Card key={post.slug.current}>
+            <CardHeader>
+              <CardTitle>
+                <Link
+                  href={`/posts/${post.slug.current}`}
+                  className="hover:text-blue-600"
+                >
+                  {post.title}
+                </Link>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-2">
+                {new Date(post.date).toLocaleDateString()} | By {post.author}
+              </p>
+              <p className="text-sm">{post.excerpt}</p>
+            </CardContent>
+          </Card>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
